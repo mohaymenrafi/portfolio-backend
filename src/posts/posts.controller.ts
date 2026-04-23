@@ -24,7 +24,7 @@ export class PostsController {
 
   @Get()
   findPublished(@Query() query: PaginatePostsDto) {
-    return this.postsService.findPublished(query.page, query.limit);
+    return this.postsService.findPublished(query.page, query.limit, query.search);
   }
 
   @ApiBearerAuth()

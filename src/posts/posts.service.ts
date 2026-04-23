@@ -14,9 +14,19 @@ export class PostsService {
     });
   }
 
-  async findPublished(page: number = 1, limit: number = 6) {
+  async findPublished(page: number = 1, limit: number = 6, search?: string) {
     const skip = (page - 1) * limit;
-    const where = { published: true };
+    const where = {
+      published: true,
+      ...(search
+        ? {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' as const } },
+              { excerpt: { contains: search, mode: 'insensitive' as const } },
+            ],
+          }
+        : {}),
+    };
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.post.findMany({
