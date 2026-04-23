@@ -25,6 +25,13 @@ export class PostsController {
     return this.postsService.findPublished();
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('admin/all')
+  findAll() {
+    return this.postsService.findAll();
+  }
+
   @Get(':slug')
   findOne(@Param('slug') slug: string) {
     return this.postsService.findOne(slug);
