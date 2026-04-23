@@ -14,12 +14,28 @@ export class PostsService {
     });
   }
 
-  findPublished() {
-    return this.prisma.post.findMany({
-      where: { published: true },
-      orderBy: { createdAt: 'desc' },
-      include: { tags: true },
-    });
+  async findPublished(page: number = 1, limit: number = 6) {
+    const skip = (page - 1) * limit;
+    const where = { published: true };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.post.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        include: { tags: true },
+        skip,
+        take: limit,
+      }),
+      this.prisma.post.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(slug: string) {

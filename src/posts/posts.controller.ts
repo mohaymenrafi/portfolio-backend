@@ -7,11 +7,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
+import { PaginatePostsDto } from './dto/paginate-posts.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 
@@ -21,8 +23,8 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  findPublished() {
-    return this.postsService.findPublished();
+  findPublished(@Query() query: PaginatePostsDto) {
+    return this.postsService.findPublished(query.page, query.limit);
   }
 
   @ApiBearerAuth()
